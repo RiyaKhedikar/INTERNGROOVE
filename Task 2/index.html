@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form To Email Using JavaScript</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <form onsubmit="sendEmail(); reset(); return false">
+            <h3>GET IN TOUCH</h3>
+            <input type="text" id="name" placeholder="Your name" required>
+            <input type="email" id="email" placeholder="Email id" required>
+            <input type="text" id="phone" placeholder="Phone no." required>
+            <textarea id="message" rows="4" placeholder="How can we help you?"></textarea>
+            <button type="submit">send</button>
+        </form>
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script>
+        function sendEmail() {
+            (function() {
+                emailjs.init("X2ue3ohicvsY0KGOa");  // Replace with your EmailJS Public Key
+            })();
+        
+            var templateParams = {
+                from_name: document.getElementById("name").value,
+                from_email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                message: document.getElementById("message").value
+            };
+        
+            emailjs.send("service_k21xmnp", "template_5hp09n6", templateParams)
+            .then(function(response) {
+                alert("Message Sent Successfully!");
+            }, function(error) {
+                alert("Failed to send message. Please try again.");
+                console.log("Error: ", error);
+            });
+        }
+        
+    </script>
+</body>
+</html>
+>>>>>>> 309f5eb (second task)
