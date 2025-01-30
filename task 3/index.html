@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white">
+
+    <div class="container mx-auto max-w-xl mt-10 p-6 bg-gray-800 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-center text-pink-400">CRUD Application</h2>
+
+        <div class="mt-4 flex">
+            <input type="text" id="itemName" placeholder="Enter item name"
+                class="flex-grow p-2 rounded-lg border border-gray-600 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400">
+            <button onclick="addItem()" class="ml-2 bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600">
+                Add
+            </button>
+        </div>
+
+        <ul id="itemList" class="mt-4 space-y-2"></ul>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:3000/items";
+
+        async function fetchItems() {
+            const res = await fetch(API_URL);
+            const items = await res.json();
+            document.getElementById("itemList").innerHTML = items.map(item => `
+                <li class="flex justify-between items-center p-2 bg-gray-700 rounded-lg">
+                    <span>${item.name}</span>
+                    <div>
+                        <button onclick="editItem(${item.id})" class="bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600">Edit</button>
+                        <button onclick="deleteItem(${item.id})" class="bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600">Delete</button>
+                    </div>
+                </li>
+            `).join("");
+        }
+
+        async function addItem() {
+            const name = document.getElementById("itemName").value;
+            if (!name) return alert("Enter an item name");
+
+            await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name })
+            });
+
+            document.getElementById("itemName").value = "";
+            fetchItems();
+        }
+
+        async function editItem(id) {
+            const newName = prompt("Enter new name:");
+            if (!newName) return;
+
+            await fetch(`${API_URL}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: newName })
+            });
+
+            fetchItems();
+        }
+
+        async function deleteItem(id) {
+            await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+            fetchItems();
+        }
+
+        fetchItems();
+    </script>
+
+</body>
+
+</html>
